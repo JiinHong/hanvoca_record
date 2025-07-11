@@ -31,7 +31,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<TabType>('all')
   const [expanded, setExpanded] = useState<string | null>(null)
-  const [sortAsc, setSortAsc] = useState(true)
+  const [sortAsc, setSortAsc] = useState(false)
   const [expandedSentences, setExpandedSentences] = useState<{ [sentence: string]: boolean }>({})
 
   // 사용자 ID 매핑
