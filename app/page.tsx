@@ -49,10 +49,13 @@ export default function Home() {
       setLoading(true)
       setError(null)
       
-      const response = await fetch('https://whlfxkvrmdzgscnlklmn.supabase.co/functions/v1/get_all_data', {
+      const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_KEY;
+      const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/get_all_data`, {
         method: 'GET',
         headers: {
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndobGZ4a3ZybWR6Z3NjbmxrbG1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU5OTQwNjUsImV4cCI6MjA2MTU3MDA2NX0.R6aI0I3XLpfr7WEGuyYdwvULgt9HYszYNIx2R6P6tLI',
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
           'Content-Type': 'application/json',
         },
       })
