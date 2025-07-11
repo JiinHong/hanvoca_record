@@ -33,6 +33,7 @@ export default function Home() {
   const [expanded, setExpanded] = useState<string | null>(null)
   const [sortAsc, setSortAsc] = useState(false)
   const [expandedSentences, setExpandedSentences] = useState<{ [sentence: string]: boolean }>({})
+  const [expandedUsers, setExpandedUsers] = useState<{ [anon_id: string]: boolean }>({})
 
   // 사용자 ID 매핑
   const userIdMap = useMemo(() => {
@@ -238,32 +239,40 @@ export default function Home() {
               {Object.entries(groupByUser(data?.vocab_feedback_log || []))
                 .sort((a, b) => b[1].length - a[1].length)
                 .map(([anon_id, logs]) => (
-                  <div key={anon_id} className="mb-8">
-                    <div className="mb-2 font-semibold text-blue-700">{userIdMap[anon_id]} <span className="ml-2 text-xs text-gray-500">({logs.length}개 응답)</span></div>
-                    <div className="overflow-x-auto">
-                      <table className="min-w-[700px] w-full bg-white border border-gray-200 rounded-lg text-xs md:text-sm">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th className="px-2 md:px-4 py-2 font-medium text-gray-500 uppercase border-b whitespace-nowrap">시간</th>
-                            <th className="px-2 md:px-4 py-2 font-medium text-gray-500 uppercase border-b whitespace-nowrap">문장</th>
-                            <th className="px-2 md:px-4 py-2 font-medium text-gray-500 uppercase border-b whitespace-nowrap">답변</th>
-                            <th className="px-2 md:px-4 py-2 font-medium text-gray-500 uppercase border-b whitespace-nowrap">정답</th>
-                            <th className="px-2 md:px-4 py-2 font-medium text-gray-500 uppercase border-b whitespace-nowrap">피드백</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200">
-                          {sortByTime(logs).map((item, idx) => (
-                            <tr key={item.id} className="hover:bg-gray-50">
-                              <td className="px-2 md:px-4 py-2 text-gray-500 whitespace-nowrap">{formatDate(item.created_at)}</td>
-                              <td className="px-2 md:px-4 py-2 text-gray-900 break-words max-w-[180px] md:max-w-xs">{item.sentence}</td>
-                              <td className="px-2 md:px-4 py-2 text-gray-800 break-words max-w-[100px]">{item.guess}</td>
-                              <td className="px-2 md:px-4 py-2 text-green-700 font-semibold break-words max-w-[100px]">{item.answer}</td>
-                              <td className={`px-2 md:px-4 py-2 ${getFeedbackColor(item.feedback)} break-words max-w-[180px]`}>{item.feedback}</td>
+                  <div key={anon_id} className="mb-8 border border-gray-200 rounded-lg">
+                    <button
+                      className="w-full text-left px-4 py-3 bg-gray-100 hover:bg-blue-100 rounded-t-lg font-semibold text-blue-700 flex justify-between items-center"
+                      onClick={() => setExpandedUsers(prev => ({ ...prev, [anon_id]: !prev[anon_id] }))}
+                    >
+                      <span>{userIdMap[anon_id]} <span className="ml-2 text-xs text-gray-500">({logs.length}개 응답)</span></span>
+                      <span>{expandedUsers[anon_id] ? '▲' : '▼'}</span>
+                    </button>
+                    {expandedUsers[anon_id] && (
+                      <div className="overflow-x-auto">
+                        <table className="min-w-[700px] w-full bg-white border border-gray-200 rounded-b-lg text-xs md:text-sm">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-2 md:px-4 py-2 font-medium text-gray-500 uppercase border-b whitespace-nowrap">시간</th>
+                              <th className="px-2 md:px-4 py-2 font-medium text-gray-500 uppercase border-b whitespace-nowrap">문장</th>
+                              <th className="px-2 md:px-4 py-2 font-medium text-gray-500 uppercase border-b whitespace-nowrap">답변</th>
+                              <th className="px-2 md:px-4 py-2 font-medium text-gray-500 uppercase border-b whitespace-nowrap">정답</th>
+                              <th className="px-2 md:px-4 py-2 font-medium text-gray-500 uppercase border-b whitespace-nowrap">피드백</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                          </thead>
+                          <tbody className="divide-y divide-gray-200">
+                            {sortByTime(logs).map((item, idx) => (
+                              <tr key={item.id} className="hover:bg-gray-50">
+                                <td className="px-2 md:px-4 py-2 text-gray-500 whitespace-nowrap">{formatDate(item.created_at)}</td>
+                                <td className="px-2 md:px-4 py-2 text-gray-900 break-words max-w-[180px] md:max-w-xs">{item.sentence}</td>
+                                <td className="px-2 md:px-4 py-2 text-gray-800 break-words max-w-[100px]">{item.guess}</td>
+                                <td className="px-2 md:px-4 py-2 text-green-700 font-semibold break-words max-w-[100px]">{item.answer}</td>
+                                <td className={`px-2 md:px-4 py-2 ${getFeedbackColor(item.feedback)} break-words max-w-[180px]`}>{item.feedback}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
                   </div>
                 ))}
             </div>
